@@ -3,12 +3,14 @@ import time
 from bs4 import BeautifulSoup
 from datetime import datetime
 import json
+from pyfiglet import figlet_format
 
 """
 TO DO
     multi-pid support
     proxy support
     use Twitter api to post when product restocks
+    automate purchase (single account)
 """
 def checkPage(pid):
     # request the given pid, record the timestamp that the request is returned
@@ -46,6 +48,22 @@ def getStock(page, timestamp):
 
 
 def startMonitor(pid, delay):
+    print(figlet_format('Welcome to pi-scraper', font='avatar'))
+    print("""\033[1;32;40m
+   .~~.   .~~.
+  '. \ ' ' / .'
+
+   \033[0m
+   \033[1;31;40m
+   .~ .~~~..~.
+  : .~.'~'.~. :
+ ~ (   ) (   ) ~
+( : '~'.~.'~' : )
+ ~ .~ (   ) ~. ~
+  (  : '~' :  ) 
+   '~ .~~~. ~'
+   \033[0m
+   """)
     # initially sets outOfStock to True, calls checkPage function to check item page stock status until item is found to be in stock
     outOfStock = True
     while outOfStock:
@@ -53,5 +71,13 @@ def startMonitor(pid, delay):
         # delay to prevent rate limiting
         time.sleep(delay)
 
-
-startMonitor('5323', 5)
+pids = {
+    '4B 1GB': '4295',
+    '4B 2GB': '4292',
+    '4B 4GB': '4296',
+    '4B 8GB': '4564',
+    'Zero WH': '3708',
+    'Zero W': '3400',
+    'Zero 2W': '5291'
+}
+startMonitor(pids['4B 8GB'], 5)
