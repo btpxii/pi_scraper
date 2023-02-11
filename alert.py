@@ -10,7 +10,7 @@ def discord_webhook(title, url, stock, timestamp):
     webhook = os.getenv("WEBHOOK")
     data = {
         "username": 'PInventory Monitor',
-        "avatar_url": 'https://d2794n4cyhr13z.cloudfront.net/packs/production/media/src/images/landing/adafruit-compact-256-c164befb381ecf49c07e8b058f6894e6.png',
+        "avatar_url": 'https://cdn-icons-png.flaticon.com/512/2718/2718539.png',
         "embeds": [{
             "title": f"RESTOCK: {title}",
             "url": url, 
