@@ -19,7 +19,6 @@ def checkPage(pid):
     res = requests.get(url)
     timestamp = datetime.utcnow()
     if res.status_code == 200:
-
         page = BeautifulSoup(res.text, 'html.parser')
         prodTitle = page.find('div', class_='mobile-product-header').find('h1').text.strip()
         # initially set oos to True, change if checks below find product is in stock
@@ -50,27 +49,21 @@ def getStock(page):
     return stock
 
 def startMonitor(pid, delay):
-    print(figlet_format('Welcome to PInventory', font='avatar'))
-    print("""\033[1;32;40m
+    print(figlet_format('Welcome to PInventory', font='avatar'), """\033[1;32;40m
    .~~.   .~~.
-  '. \ ' ' / .'
-
-   \033[0m
-   \033[1;31;40m
+  '. \ ' ' / .'\033[0m\033[1;31;40m
    .~ .~~~..~.
   : .~.'~'.~. :
  ~ (   ) (   ) ~
 ( : '~'.~.'~' : )
  ~ .~ (   ) ~. ~
   (  : '~' :  ) 
-   '~ .~~~. ~'
-   \033[0m
+   '~ .~~~. ~'\033[0m
    """)
     while True:
         checkPage(pid)
         # delay to prevent rate limiting
         time.sleep(delay)
-
 
 pids = {
     '4B 1GB': '4295',
