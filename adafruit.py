@@ -8,10 +8,9 @@ from alert import restockAlert
 
 """
 TO DO
-    multi-pid support
-    proxy support
-    use Twitter api to post when product restocks
-    automate purchase (single account)
+    proxy support (needs to be done before multithreading)
+    multithreaded multiple pid support (?)
+    automate purchase (single account) (selinium or requests, not sure yet)
 """
 def checkPage(pid):
     # request the given pid, record the timestamp that the request is returned
@@ -48,7 +47,7 @@ def getStock(page):
         stock = f"{stock.split()[0]}"
     return stock
 
-def startMonitor(pid, delay):
+def startMonitor(pids, delay):
     print(figlet_format('Welcome to PInventory', font='avatar'), """\033[1;32;40m
    .~~.   .~~.
   '. \ ' ' / .'\033[0m\033[1;31;40m
@@ -61,9 +60,10 @@ def startMonitor(pid, delay):
    '~ .~~~. ~'\033[0m
    """)
     while True:
-        checkPage(pid)
-        # delay to prevent rate limiting
-        time.sleep(delay)
+        for pid in pids: # sucky support for multiple pids (for now)
+            checkPage(pids[pid])
+            # delay to prevent rate limiting
+            time.sleep(delay)
 
 pids = {
     '4B 1GB': '4295',
@@ -72,7 +72,8 @@ pids = {
     '4B 8GB': '4564',
     'Zero WH': '3708',
     'Zero W': '3400',
-    'Zero 2W': '5291',
-    'test': '5695'
+    'Zero 2W': '5291'
+    # 'test': '5695'
 }
-startMonitor(pids['test'], 5)
+
+startMonitor(pids, 2)
