@@ -38,8 +38,8 @@ def startMonitor():
             monitors.append(file[0:file.find('.')])
     # user selects module
     selected_monitor = int(input("SELECT MONITOR:\n" + '\n'.join([str(i + 1) + ": " + x.upper() for i, x in enumerate(monitors)]) + "\n"))
-    print(f"\n{monitors[selected_monitor-1].upper()} MONITOR SELECTED")
     delay = int(input("ENTER DELAY (ms):\n"))/1000 # user enters delay in milliseconds, converted to seconds for time.sleep
+    print(f"\nSTARTING {monitors[selected_monitor-1].upper()} MONITOR, {delay} SECOND DELAY\n--------------------------------------------")
     # assign monitor variable to selected monitor's import
     if selected_monitor == 1: monitor = ada 
     elif selected_monitor == 2: monitor = ps

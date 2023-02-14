@@ -27,7 +27,7 @@ def discord_webhook(title, url, stock, timestamp):
         print(f"[{datetime.utcnow()}] Webhook failed")
 
 def restockAlert(url, title, stock, method, timestamp):
-    # Write details of restock to the console
-    print(f"[{timestamp}] Restock @ {url}, found using \"{method}\" method")
     # Send restock details to user's Discord server
     discord_webhook(title, url, stock, timestamp)
+    # Write details of restock to the console
+    print(f"[{timestamp}] Restock @ {url}, found using \"{method}\" method")
