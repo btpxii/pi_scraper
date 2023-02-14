@@ -1,91 +1,91 @@
 {
     "4B 1GB": {
         "adafruit": {
-            "pid": "4295",
+            "endpoint": "4295",
             "lastRestock": null
         }, 
-        "pishop": {
-            "url": "https://www.pishop.us/product/raspberry-pi-4-model-b-1gb/",
+        "pishopus": {
+            "endpoint": "raspberry-pi-4-model-b-1gb",
             "lastRestock": null
         }
     },
     "4B 2GB": {
         "adafruit": {
-            "pid": "4292",
+            "endpoint": "4292",
             "lastRestock": null
         }, 
-        "pishop": {
-            "url": "https://www.pishop.us/product/raspberry-pi-4-model-b-2gb/",
+        "pishopus": {
+            "endpoint": "raspberry-pi-4-model-b-2gb",
             "lastRestock": null
         }
     },
     "4B 4GB": {
         "adafruit": {
-            "pid": "4296",
+            "endpoint": "4296",
             "lastRestock": null
         }, 
-        "pishop": {
-            "url": "https://www.pishop.us/product/raspberry-pi-4-model-b-4gb/",
+        "pishopus": {
+            "endpoint": "raspberry-pi-4-model-b-4gb",
             "lastRestock": null
         }
     },
     "4B 8GB": {
         "adafruit": {
-            "pid": "4564",
+            "endpoint": "4564",
             "lastRestock": null
         }, 
-        "pishop": {
-            "url": "https://www.pishop.us/product/raspberry-pi-4-model-b-8gb/",
+        "pishopus": {
+            "endpoint": "raspberry-pi-4-model-b-8gb",
             "lastRestock": null
         }
     },
     "Zero W": {
         "adafruit": {
-            "pid": "3400",
+            "endpoint": "3400",
             "lastRestock": null
         }, 
-        "pishop": {
-            "url": "https://www.pishop.us/product/raspberry-pi-zero-w/",
+        "pishopus": {
+            "endpoint": "raspberry-pi-zero-w",
             "lastRestock": null
         }
     },
     "Zero WH": {
         "adafruit": {
-            "pid": "3708",
+            "endpoint": "3708",
             "lastRestock": null
         }, 
-        "pishop": {
-            "url": "https://www.pishop.us/product/raspberry-pi-zero-wireless-wh-pre-soldered-header/",
+        "pishopus": {
+            "endpoint": "raspberry-pi-zero-wireless-wh-pre-soldered-header",
             "lastRestock": null
         }
     },
     "Zero": {
         "adafruit": {
-            "pid": null,
+            "endpoint": null,
             "lastRestock": null
         }, 
-        "pishop": {
-            "url": "https://www.pishop.us/product/raspberry-pi-zero/",
+        "pishopus": {
+            "endpoint": "raspberry-pi-zero",
             "lastRestock": null
         }
     },
     "Zero 2W": {
         "adafruit": {
-            "pid": "5291",
+            "endpoint": "5291",
             "lastRestock": null
         }, 
-        "pishop": {
-            "url": null,
+        "pishopus": {
+            "endpoint": null,
             "lastRestock": null
         }
     },
     "test": {
         "adafruit": {
-            "pid": "5695",
+            "endpoint": null,
             "lastRestock": null
         },
-        "pishop": {
-            "url": "https://www.pishop.us/product/dsi-ffc-flexible-flat-cable-15cm/",
+        "pishopus": {
+            "endpoint": null,
             "lastRestock": null
         }
     }

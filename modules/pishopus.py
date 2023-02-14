@@ -6,8 +6,9 @@ import json
 import re
 from alert import restockAlert
 
-def checkPage(url):
+def checkPage(endpoint):
     # request the given url, record the timestamp that the request is returned
+    url = f"https://www.pishop.us/product/{endpoint}"
     res = requests.get(url)
     timestamp = datetime.utcnow()
     if res.status_code == 200:
@@ -26,7 +27,6 @@ def checkPage(url):
             if data['product_attributes']['instock'] == True:
                 stock = data['product_attributes']['stock']
                 restockAlert(url, prodTitle, stock, 'BCData instock is True', timestamp)
-                time.sleep(30)
             else: # if no BCData, return that the product is out of stock
                 print(f"[{timestamp}] {prodTitle} is not in stock. Refreshing...")
     else:
