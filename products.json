@@ -1,1 +1,92 @@
-{"test": {"adafruit": {"endpoint": "292", "lastRestock": "2023-02-15 07:51:27.323340"}, "pishopus": {"endpoint": "raspberry-pi-camera-module-3", "lastRestock": "2023-02-15 07:57:04.706489"}}, "4B 1GB": {"adafruit": {"endpoint": "4295", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-4-model-b-1gb", "lastRestock": null}}, "4B 2GB": {"adafruit": {"endpoint": "4292", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-4-model-b-2gb", "lastRestock": null}}, "4B 4GB": {"adafruit": {"endpoint": "4296", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-4-model-b-4gb", "lastRestock": null}}, "4B 8GB": {"adafruit": {"endpoint": "4564", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-4-model-b-8gb", "lastRestock": null}}, "Zero W": {"adafruit": {"endpoint": "3400", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-zero-w", "lastRestock": null}}, "Zero WH": {"adafruit": {"endpoint": "3708", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-zero-wireless-wh-pre-soldered-header", "lastRestock": null}}, "Zero": {"adafruit": {"endpoint": null, "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-zero", "lastRestock": null}}, "Zero 2W": {"adafruit": {"endpoint": "5291", "lastRestock": null}, "pishopus": {"endpoint": null, "lastRestock": null}}}
+{
+    "test": {
+        "adafruit": {
+            "endpoint": null,
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": null,
+            "lastRestock": null
+        }
+    },
+    "4B 1GB": {
+        "adafruit": {
+            "endpoint": "4295",
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": "raspberry-pi-4-model-b-1gb",
+            "lastRestock": null
+        }
+    },
+    "4B 2GB": {
+        "adafruit": {
+            "endpoint": "4292",
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": "raspberry-pi-4-model-b-2gb",
+            "lastRestock": null
+        }
+    },
+    "4B 4GB": {
+        "adafruit": {
+            "endpoint": "4296",
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": "raspberry-pi-4-model-b-4gb",
+            "lastRestock": null
+        }
+    },
+    "4B 8GB": {
+        "adafruit": {
+            "endpoint": "4564",
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": "raspberry-pi-4-model-b-8gb",
+            "lastRestock": null
+        }
+    },
+    "Zero W": {
+        "adafruit": {
+            "endpoint": "3400",
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": "raspberry-pi-zero-w",
+            "lastRestock": null
+        }
+    },
+    "Zero WH": {
+        "adafruit": {
+            "endpoint": "3708",
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": "raspberry-pi-zero-wireless-wh-pre-soldered-header",
+            "lastRestock": null
+        }
+    },
+    "Zero": {
+        "adafruit": {
+            "endpoint": null,
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": "raspberry-pi-zero",
+            "lastRestock": null
+        }
+    },
+    "Zero 2W": {
+        "adafruit": {
+            "endpoint": "5291",
+            "lastRestock": null
+        },
+        "pishopus": {
+            "endpoint": null,
+            "lastRestock": null
+        }
+    }
+}
