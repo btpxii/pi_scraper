@@ -3,7 +3,6 @@ import time
 from bs4 import BeautifulSoup
 from datetime import datetime
 import json
-from alert import restockAlert
 
 def checkPage(endpoint):
     # request the given endpoint, record the timestamp that the request is returned
@@ -15,14 +14,16 @@ def checkPage(endpoint):
         prodTitle = page.find('div', class_='mobile-product-header').find('h1').text.strip()
         # first check - look for form with class add_to_cart_form on page
         if page.find('form', class_='add_to_cart_form'):
-            stock = getStock(page)
-            restockAlert(url, prodTitle, stock, 'add-to-cart button enabled', timestamp)
+            stock = getStock(page) # get stock from page
+            # return product data to send out restock alert
+            return {'url': url, 'title': prodTitle, 'stock': stock, 'timestamp': timestamp, 'method': 'add-to-cart button enabled'}
         else:
             # second check - look in structured date script tag for InStock availability status
             availability = json.loads(page.findAll('script', {'type': 'application/ld+json'})[1].text)['offers']['availability']
             if "InStock" in availability:
-                stock = getStock(page)
-                restockAlert(url, prodTitle, stock, 'InStock status enabled', timestamp)
+                stock = getStock(page) # get stock from page
+                # return product data to send out restock alert
+                return {'url': url, 'title': prodTitle, 'stock': stock, 'timestamp': timestamp, 'method': 'InStock status enabled'}
             else: # if all checks fail, return that the product is out of stock
                 print(f"[{timestamp}] {prodTitle} is not in stock. Refreshing...")
     else:

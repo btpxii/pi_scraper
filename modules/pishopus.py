@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import json
 import re
-from alert import restockAlert
 
 def checkPage(endpoint):
     # request the given url, record the timestamp that the request is returned
@@ -26,7 +25,7 @@ def checkPage(endpoint):
             # look in BCData variable for instock attribute True
             if data['product_attributes']['instock'] == True:
                 stock = data['product_attributes']['stock']
-                restockAlert(url, prodTitle, stock, 'BCData instock is True', timestamp)
+                return {'url': url, 'title': prodTitle, 'stock': stock, 'timestamp': timestamp, 'method': 'BCData instock is True'}
             else: # if no BCData, return that the product is out of stock
                 print(f"[{timestamp}] {prodTitle} is not in stock. Refreshing...")
     else:
