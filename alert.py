@@ -12,7 +12,7 @@ def discord_webhook(title, url, stock, timestamp):
         "username": 'PInventory Monitor',
         "avatar_url": 'https://cdn-icons-png.flaticon.com/512/2718/2718539.png',
         "embeds": [{
-            "title": f"RESTOCK: {title}",
+            "title": f"{url.split('.')[1].upper()} RESTOCK: {title}",
             "url": url, 
             "fields": [{"name": "Stock:", "value": stock, "inline": True}],
             "footer": {"text": "GitHub: btpxii"},
