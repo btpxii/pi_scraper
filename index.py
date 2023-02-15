@@ -56,7 +56,7 @@ def startMonitor():
                         last_restock = datetime.strptime("2002-01-23 12:00:00.000000", "%Y-%m-%d %H:%M:%S.%f") # temporarily sets last_restock equal to an unimportant date that definitely isn't my birthday
                     if (res['timestamp'] - last_restock) > timedelta(minutes=10):
                         # console log restock and send discord webhook
-                        restockAlert(res['url'], res['title'], res['stock'], res['method'], res['timestamp'])
+                        restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'])
                         # writes restock timestamp to products.json file
                         with open('products.json', 'r') as f:
                             data = json.load(f)

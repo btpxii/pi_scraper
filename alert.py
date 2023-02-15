@@ -6,7 +6,7 @@ import os
 
 load_dotenv()
 
-def discord_webhook(title, url, stock, timestamp):
+def discord_webhook(title, url, stock, price, timestamp):
     webhook = os.getenv("WEBHOOK")
     data = {
         "username": 'PInventory Monitor',
@@ -14,9 +14,9 @@ def discord_webhook(title, url, stock, timestamp):
         "embeds": [{
             "title": f"{url.split('.')[1].upper()} RESTOCK: {title}",
             "url": url, 
-            "fields": [{"name": "Stock:", "value": stock, "inline": True}],
-            "footer": {"text": "GitHub: btpxii"},
-            "timestamp": str(timestamp),
+            "fields": [{"name": "Price", "value": price, "inline": True}, {"name": "Stock:", "value": stock, "inline": True}],
+            "footer": {"text": f"GitHub: btpxii | [ {timestamp.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]} UTC ]"},
+            # "timestamp": str(timestamp),
         }]
     }
 
@@ -26,8 +26,8 @@ def discord_webhook(title, url, stock, timestamp):
     else:
         print(f"[{datetime.utcnow()}] Webhook failed")
 
-def restockAlert(url, title, stock, method, timestamp):
+def restockAlert(url, title, stock, price, method, timestamp):
     # Send restock details to user's Discord server
-    discord_webhook(title, url, stock, timestamp)
+    discord_webhook(title, url, stock, price, timestamp)
     # Write details of restock to the console
     print(f"[{timestamp}] Restock @ {url}, found using \"{method}\" method")

@@ -13,6 +13,7 @@ def checkPage(endpoint):
     if res.status_code == 200:
         page = BeautifulSoup(res.text, 'html.parser')
         prodTitle = page.find('h1', class_='productView-title').text.strip()
+        price = page.find('div', class_='productView-price').find('span', class_='price--withoutTax').text.strip()
         # find script tag with BCData variable
         scripts = page.find_all('script', type="text/javascript")
         for script in scripts:
@@ -25,7 +26,7 @@ def checkPage(endpoint):
             # look in BCData variable for instock attribute True
             if data['product_attributes']['instock'] == True:
                 stock = data['product_attributes']['stock']
-                return {'url': url, 'title': prodTitle, 'stock': stock, 'timestamp': timestamp, 'method': 'BCData instock is True'}
+                return {'url': url, 'title': prodTitle, 'stock': stock, 'price': price, 'timestamp': timestamp, 'method': 'BCData instock is True'}
             else: # if no BCData, return that the product is out of stock
                 print(f"[{timestamp}] {prodTitle} is not in stock. Refreshing...")
     else:
