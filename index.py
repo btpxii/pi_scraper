@@ -9,7 +9,14 @@ from alert import restockAlert
 
 """
 TO DO
-    write recent restock time to products.json
+    write monitors for the following sites
+        sparkfun.com
+        canakit.com
+        shopify sites
+            shop.pimoroni.com
+            chicagodist.com
+            vilros.com
+            
     proxy support (needs to be done before multithreading)
     multithreaded multiple pid support (?)
     automate purchase (single account) (selinium or requests, not sure yet)
@@ -45,26 +52,45 @@ def startMonitor():
         f = open('products.json')
         products = json.load(f)
         f.close()
-        for product in products: # sucky support for multiple pids (for now)
-            if products[product][monitors[selected_monitor-1]]["endpoint"]: # only check when product exists for site
-                res = monitor.checkPage(products[product][monitors[selected_monitor-1]]["endpoint"]) # runs checkPage function for selected monitor
-                if res: # data is returned from checkpage if a restock is found
-                    # check timestamp to prevent pinging the same restock multiple times
-                    try: # tries to convert current product's lastRestock attribute to a datetime obj
-                        last_restock = datetime.strptime(products[product][monitors[selected_monitor-1]]['lastRestock'], "%Y-%m-%d %H:%M:%S.%f")
-                    except:
-                        last_restock = datetime.strptime("2002-01-23 12:00:00.000000", "%Y-%m-%d %H:%M:%S.%f") # temporarily sets last_restock equal to an unimportant date that definitely isn't my birthday
-                    if (res['timestamp'] - last_restock) > timedelta(minutes=10):
-                        # console log restock and send discord webhook
-                        restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'])
-                        # writes restock timestamp to products.json file
-                        with open('products.json', 'r') as f:
-                            data = json.load(f)
-                        data[product][monitors[selected_monitor-1]]['lastRestock'] = str(res['timestamp'])
-                        with open('products.json', 'w') as f:
-                            json.dump(data, f)
-                    else:
-                        print(f"[{res['timestamp']}] {res['title']} is in stock, restock began at {last_restock.strftime('%Y-%m-%d %H:%M:%S')}. Refreshing...")
-                time.sleep(delay) # delay to prevent rate limiting
-
+        for product in products[monitors[selected_monitor-1]]: # sucky support for multiple pids (for now)
+            if products[monitors[selected_monitor-1]][product]["id"]: # only check when id is already stored
+                res = monitor.checkPage(products[monitors[selected_monitor-1]][product]["id"]) # runs checkPage function for selected monitor
+                res['url'] = products[monitors[selected_monitor-1]][product]["prodPage"] if res['url'] == None else res['url']
+                res['title'] = products[monitors[selected_monitor-1]][product]["title"] if res['title'] == None else res['title']
+                # print(res)
+                if res['response_code'] // 100 < 4: # continue checking response if response code from checkPage wasn't an error
+                    if res['instock'] is True: # instock status returned true from checkpage if a restock is found
+                        # check timestamp to prevent pinging the same restock multiple times
+                        try: # tries to convert current product's lastRestock attribute to a datetime obj
+                            last_restock = datetime.strptime(products[monitors[selected_monitor-1]][product]['lastRestock'], "%Y-%m-%d %H:%M:%S.%f")
+                        except:
+                            last_restock = datetime.strptime("2002-01-23 12:00:00.000000", "%Y-%m-%d %H:%M:%S.%f") # temporarily sets last_restock equal to an unimportant date that definitely isn't my birthday
+                        if (res['timestamp'] - last_restock) > timedelta(minutes=10):
+                            # print restock and send discord webhook
+                            restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'])
+                            # writes restock timestamp to products.json file
+                            with open('products.json', 'r') as f:
+                                data = json.load(f)
+                            data[monitors[selected_monitor-1]][product]['lastRestock'] = str(res['timestamp'])
+                            with open('products.json', 'w') as f:
+                                json.dump(data, f)
+                        else:
+                            print(f"[{res['timestamp']}] {res['title']} is in stock, restock began at {last_restock.strftime('%Y-%m-%d %H:%M:%S')}. Refreshing...")
+                    else: # print that product isn't in stock if instock status is returned false
+                        print(f"[{res['timestamp']}] {res['title']} is not in stock. Refreshing...")
+                else:
+                    print(f"[{res['timestamp']}] Error checking {res['title']}, {res['response_code']} error. Refreshing...")
+            elif ("prodPage" in products[monitors[selected_monitor-1]][product]) and (products[monitors[selected_monitor-1]][product]["prodPage"]): # if endpoint exists but id doesn't use getProdInfo function to request endpoint and return product id (only used for pishop.us at the moment)
+                res = monitor.getProdInfo(products[monitors[selected_monitor-1]][product]["prodPage"])
+                if (res['response_code'] // 100 < 4) and (res['title'] != None) and (res['id'] != None):
+                    with open('products.json', 'r') as f:
+                        data = json.load(f)
+                    data[monitors[selected_monitor-1]][product]['id'] = res['id']
+                    data[monitors[selected_monitor-1]][product]['title'] = res['title']
+                    with open('products.json', 'w') as f:
+                        json.dump(data, f)
+                    print(f"[{datetime.utcnow()}] Successfully retrieved and stored the product id for {res['title']}")
+                else:
+                    print(f"[{datetime.utcnow()}] Error retrieving product id from {products[monitors[selected_monitor-1]][product]['prodPage']}, {res['response_code']} error. Refreshing...")
+            time.sleep(delay) # delay to prevent rate limiting
 startMonitor()

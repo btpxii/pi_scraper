@@ -1,1 +1,86 @@
-{"test": {"adafruit": {"endpoint": null, "lastRestock": null}, "pishopus": {"endpoint": null, "lastRestock": null}}, "4B 1GB": {"adafruit": {"endpoint": "4295", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-4-model-b-1gb", "lastRestock": null}}, "4B 2GB": {"adafruit": {"endpoint": "4292", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-4-model-b-2gb", "lastRestock": null}}, "4B 4GB": {"adafruit": {"endpoint": "4296", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-4-model-b-4gb", "lastRestock": null}}, "4B 8GB": {"adafruit": {"endpoint": "4564", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-4-model-b-8gb", "lastRestock": null}}, "Zero W": {"adafruit": {"endpoint": "3400", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-zero-w", "lastRestock": null}}, "Zero WH": {"adafruit": {"endpoint": "3708", "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-zero-wireless-wh-pre-soldered-header", "lastRestock": null}}, "Zero": {"adafruit": {"endpoint": null, "lastRestock": null}, "pishopus": {"endpoint": "raspberry-pi-zero", "lastRestock": null}}, "Zero 2W": {"adafruit": {"endpoint": "5291", "lastRestock": null}, "pishopus": {"endpoint": null, "lastRestock": null}}}
+{
+    "adafruit": {
+        "test": {
+            "id": null,
+            "lastRestock": null
+        },
+        "4B 1GB": {
+            "id": "4295",
+            "lastRestock": null
+        },
+        "4B 2GB": {
+            "id": "4292",
+            "lastRestock": null
+        },
+        "4B 4GB": {
+            "id": "4296",
+            "lastRestock": null
+        },
+        "4B 8GB": {
+            "id": "4564",
+            "lastRestock": null
+        },
+        "Zero W": {
+            "id": "3400",
+            "lastRestock": null
+        },
+        "Zero WH": {
+            "id": "3708",
+            "lastRestock": null
+        },
+        "Zero 2W": {
+            "id": "5291",
+            "lastRestock": null
+        }
+    },
+    "pishopus": {
+        "test": {
+            "id": null,
+            "prodPage": null,
+            "title": null,
+            "lastRestock": null
+        },
+        "4B 1GB": {
+            "id": "639",
+            "prodPage": "https://www.pishop.us/product/raspberry-pi-4-model-b-1gb",
+            "title": "Raspberry Pi 4 Model B/1GB",
+            "lastRestock": null
+        },
+        "4B 2GB": {
+            "id": "640",
+            "prodPage": "https://www.pishop.us/product/raspberry-pi-4-model-b-2gb",
+            "title": "Raspberry Pi 4 Model B/2GB",
+            "lastRestock": null
+        },
+        "4B 4GB": {
+            "id": "641",
+            "prodPage": "https://www.pishop.us/product/raspberry-pi-4-model-b-4gb",
+            "title": "Raspberry Pi 4 Model B/4GB",
+            "lastRestock": null
+        },
+        "4B 8GB": {
+            "id": "922",
+            "prodPage": "https://www.pishop.us/product/raspberry-pi-4-model-b-8gb",
+            "title": "Raspberry Pi 4 Model B/8GB",
+            "lastRestock": null
+        },
+        "Zero W": {
+            "id": "147",
+            "prodPage": "https://www.pishop.us/product/raspberry-pi-zero-w",
+            "title": "Raspberry Pi Zero W",
+            "lastRestock": null
+        },
+        "Zero WH": {
+            "id": "250",
+            "prodPage": "https://www.pishop.us/product/raspberry-pi-zero-wireless-wh-pre-soldered-header",
+            "title": "Raspberry Pi Zero Wireless WH (Pre-Soldered Header)",
+            "lastRestock": null
+        },
+        "Zero": {
+            "id": "146",
+            "prodPage": "https://www.pishop.us/product/raspberry-pi-zero",
+            "title": "Raspberry Pi Zero",
+            "lastRestock": null
+        }
+    }
+}

@@ -1,34 +1,32 @@
 import requests
-import time
 from bs4 import BeautifulSoup
 from datetime import datetime
 import json
 
 def checkPage(endpoint):
+    r_details = {'instock': False, 'response_code': None, 'url': f"https://www.adafruit.com/product/{endpoint}", 'title': None, 'stock': None, 'price': None, 'timestamp': None, 'method': None}
     # request the given endpoint, record the timestamp that the request is returned
-    url = f"https://www.adafruit.com/product/{endpoint}"
-    res = requests.get(url)
-    timestamp = datetime.utcnow()
-    if res.status_code == 200:
-        page = BeautifulSoup(res.text, 'html.parser')
-        prodTitle = page.find('div', class_='mobile-product-header').find('h1').text.strip()
-        price = page.find('div', class_='product-price').find('span').text.strip()
+    r = requests.get(r_details['url'])
+    r_details['timestamp'] = datetime.utcnow()
+    r_details['response_code'] = r.status_code
+    if r.status_code == 200:
+        page = BeautifulSoup(r.text, 'html.parser') # note that this line parsing with beautifulsoup takes a decent amount of time
+        r_details['title'] = page.find('div', class_='mobile-product-header').find('h1').text.strip()
+        r_details['price'] = page.find('div', class_='product-price').find('span').text.strip()
         # first check - look for form with class add_to_cart_form on page
         if page.find('form', class_='add_to_cart_form'):
-            stock = getStock(page) # get stock from page
+            r_details['stock'] = getStock(page) # get stock from page
             # return product data to send out restock alert
-            return {'url': url, 'title': prodTitle, 'stock': stock, 'price': price, 'timestamp': timestamp, 'method': 'add-to-cart button enabled'}
+            r_details['instock'] = True
+            r_details['method'] = 'add-to-cart button enabled'
         else:
             # second check - look in structured date script tag for InStock availability status
             availability = json.loads(page.findAll('script', {'type': 'application/ld+json'})[1].text)['offers']['availability']
             if "InStock" in availability:
-                stock = getStock(page) # get stock from page
-                # return product data to send out restock alert
-                return {'url': url, 'title': prodTitle, 'stock': stock, 'price': price, 'timestamp': timestamp, 'method': 'InStock status enabled'}
-            else: # if all checks fail, return that the product is out of stock
-                print(f"[{timestamp}] {prodTitle} is not in stock. Refreshing...")
-    else:
-        print(f"[{timestamp}] Error getting page, response status code {res.status_code}")
+                r_details['stock'] = getStock(page) # get stock from page
+                r_details['instock'] = True
+                r_details['method'] = 'InStock status enabled'
+    return r_details
 
 # get stock from page once product is found to be in stock
 def getStock(page):
