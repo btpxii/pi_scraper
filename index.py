@@ -17,6 +17,10 @@ TO DO
             chicagodist.com
             vilros.com
             
+    fix bug that doubles delay once product list has completed an iteration
+    store old frontend monitor for pishop in pishop file
+    add log for request errors
+    optimize request headers (rotating user agent, language, encoding, etc.)
     proxy support (needs to be done before multithreading)
     multithreaded multiple pid support (?)
     automate purchase (single account) (selinium or requests, not sure yet)
@@ -92,5 +96,8 @@ def startMonitor():
                     print(f"[{datetime.utcnow()}] Successfully retrieved and stored the product id for {res['title']}")
                 else:
                     print(f"[{datetime.utcnow()}] Error retrieving product id from {products[monitors[selected_monitor-1]][product]['prodPage']}, {res['response_code']} error. Refreshing...")
+            else:
+                continue # doesn't perform time.sleep(delay) if nothing is done with invalid products.json entry
             time.sleep(delay) # delay to prevent rate limiting
+
 startMonitor()
