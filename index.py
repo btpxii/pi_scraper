@@ -1,8 +1,12 @@
 import time
 import json
-from pyfiglet import figlet_format
 import os
 from datetime import datetime, timedelta
+import sys
+
+from pyfiglet import figlet_format
+import logging
+
 import modules.adafruit as ada
 import modules.pishopus as ps
 from alert import restockAlert
@@ -17,6 +21,7 @@ TO DO
     5. write monitors for the following sites
         sparkfun.com
         canakit.com
+            try using https://www.canakit.com/Common/System/CartAction.aspx?Action=AddItem&ProductID=IDHERE to add products to cart by id (cant get ids rn)
         shopify sites
             shop.pimoroni.com
             chicagodist.com
@@ -24,6 +29,19 @@ TO DO
             
     automate purchase (single account) (selenium or requests, not sure yet)
 """
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        logging.FileHandler('monitor.log'),
+        logging.StreamHandler()
+    ]
+)
+logging.getLogger().handlers[0].setLevel(logging.DEBUG)
+logging.getLogger().handlers[1].setLevel(logging.INFO)
+
 def getModules():
     """
     Gets and returns all file names from modules folder
@@ -91,14 +109,14 @@ def updateProdAttributes(moduleName, product, attrs):
         with open('products.json', 'w') as f:
             json.dump(data, f, indent=4)
     except:
-        print(f"Invalid attribute '{attr}' for product '{product}' in module '{moduleName}'")
+        logging.error(f"Invalid attribute '{attr}' given for product '{product}' in module '{moduleName}'")
         
 def startMonitor():
     """
     Initializes monitor
     """
     print(figlet_format('Welcome to PInventory', font='avatar'), """\033[1;32;40m
-   .~~.   .~~.
+   .~~.   .~~.ss
   '. \ ' ' / .'\033[0m\033[1;31;40m
    .~ .~~~..~.
   : .~.'~'.~. :
@@ -109,11 +127,13 @@ def startMonitor():
    '~ .~~~. ~'\033[0m
    """)
 
+    
     modules = getModules()
     moduleName, module = selectModule(modules=modules)
     delay = selectDelay()
-    print(f"\nSTARTING {moduleName.upper()} MONITOR, {delay} SECOND DELAY\n--------------------------------------------")
-
+    # moduleName, module = "adafruit", ada
+    # delay = 1
+    logging.info(msg=f"STARTING {moduleName.upper()} MONITOR, {delay} SECOND DELAY")
     # start of monitor
     while True:
         products = getProducts()
@@ -132,23 +152,24 @@ def startMonitor():
                         except:
                             last_restock = datetime.strptime("2002-01-23 12:00:00.000000", "%Y-%m-%d %H:%M:%S.%f") # temporarily sets last_restock equal to an unimportant date that definitely isn't my birthday
                         if (res['timestamp'] - last_restock) > timedelta(minutes=10):
-                            # print restock and send discord webhook
-                            restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'])
+                            # log restock and send discord webhook
+                            restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'], logging)
                             # writes restock timestamp to products.json file
                             updateProdAttributes(moduleName=moduleName, product=product, attrs={'lastRestock': res['timestamp']})
+
                         else:
-                            print(f"[{res['timestamp']}] {res['title']} is in stock, restock began at {last_restock.strftime('%Y-%m-%d %H:%M:%S')}. Refreshing...")
-                    else: # print that product isn't in stock if instock status is returned false
-                        print(f"[{res['timestamp']}] {res['title']} is not in stock. Refreshing...")
+                            logging.info(msg=f"{res['title']} is in stock, restock began at {last_restock.strftime('%Y-%m-%d %H:%M:%S')}")
+                    else: # log that product isn't in stock if instock status is returned false
+                        logging.info(msg=f"{res['title']} is not in stock")
                 else:
-                    print(f"[{res['timestamp']}] Error checking {res['title']}, {res['response_code']} error. Refreshing...")
+                    logging.error(msg=f"Error checking {res['title']}, {res['response_code']} error")
             elif ("prodPage" in prodInfo) and (prodInfo["prodPage"]): # if prodPage exists but id doesn't use getProdInfo function to request endpoint and return product id (only used for pishop.us at the moment)
                 res = module.getProdInfo(prodInfo["prodPage"])
                 if (res['response_code'] // 100 < 4) and (res['title'] != None) and (res['id'] != None):
                     updateProdAttributes(moduleName=moduleName, product=product, attrs={'id': res['id'], 'title': res['title']})
-                    print(f"[{datetime.utcnow()}] Successfully retrieved and stored the product id for {res['title']}")
+                    logging.info(f"Successfully retrieved and stored the product id for {res['title']}")
                 else:
-                    print(f"[{datetime.utcnow()}] Error retrieving product id from {prodInfo['prodPage']}, {res['response_code']} error. Refreshing...")
+                    logging.error(f"Error retrieving product id from {prodInfo['prodPage']}, {res['response_code']} error")
             else:
                 continue # doesn't perform time.sleep(delay) if nothing is done with invalid products.json entry
             time.sleep(delay) # delay to prevent rate limiting
