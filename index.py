@@ -13,7 +13,6 @@ from alert import restockAlert
 
 """
 TO DO
-    1. add log for request errors
     2. proxy support (needs to be done before multithreading)
     3. concurrency for multiple pid support
     4. determine optimal request headers
@@ -32,10 +31,9 @@ TO DO
 
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
+    format='[%(asctime)s] %(levelname)s: %(message)s',
     handlers=[
-        logging.FileHandler('monitor.log'),
+        logging.FileHandler(f"logs\monitor_{datetime.today().strftime('%m%d%Y')}.log"),
         logging.StreamHandler()
     ]
 )
