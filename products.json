@@ -19,18 +19,6 @@
         "4B 8GB": {
             "id": "4564",
             "lastRestock": null
-        },
-        "Zero W": {
-            "id": "3400",
-            "lastRestock": null
-        },
-        "Zero WH": {
-            "id": "3708",
-            "lastRestock": null
-        },
-        "Zero 2W": {
-            "id": "5291",
-            "lastRestock": null
         }
     },
     "pishopus": {
@@ -62,24 +50,6 @@
             "id": "922",
             "prodPage": "https://www.pishop.us/product/raspberry-pi-4-model-b-8gb",
             "title": "Raspberry Pi 4 Model B/8GB",
-            "lastRestock": null
-        },
-        "Zero W": {
-            "id": "147",
-            "prodPage": "https://www.pishop.us/product/raspberry-pi-zero-w",
-            "title": "Raspberry Pi Zero W",
-            "lastRestock": null
-        },
-        "Zero WH": {
-            "id": "250",
-            "prodPage": "https://www.pishop.us/product/raspberry-pi-zero-wireless-wh-pre-soldered-header",
-            "title": "Raspberry Pi Zero Wireless WH (Pre-Soldered Header)",
-            "lastRestock": null
-        },
-        "Zero": {
-            "id": "146",
-            "prodPage": "https://www.pishop.us/product/raspberry-pi-zero",
-            "title": "Raspberry Pi Zero",
             "lastRestock": null
         }
     }

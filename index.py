@@ -2,7 +2,6 @@ import time
 import json
 import os
 from datetime import datetime, timedelta
-import sys
 
 from pyfiglet import figlet_format
 import logging
@@ -13,11 +12,11 @@ from alert import restockAlert
 
 """
 TO DO
-    2. proxy support (needs to be done before multithreading)
-    3. concurrency for multiple pid support
-    4. determine optimal request headers
+    1. proxy support (needs to be done before multithreading)
+    2. concurrency for multiple pid support
+    3. determine optimal request headers
 
-    5. write monitors for the following sites
+    4. write monitors for the following sites
         sparkfun.com
         canakit.com
             try using https://www.canakit.com/Common/System/CartAction.aspx?Action=AddItem&ProductID=IDHERE to add products to cart by id (cant get ids rn)
@@ -25,15 +24,13 @@ TO DO
             shop.pimoroni.com
             chicagodist.com
             vilros.com
-            
-    automate purchase (single account) (selenium or requests, not sure yet)
 """
 
 logging.basicConfig(
     level=logging.DEBUG,
     format='[%(asctime)s] %(levelname)s: %(message)s',
     handlers=[
-        logging.FileHandler(f"logs\monitor_{datetime.today().strftime('%m%d%Y')}.log"),
+        logging.FileHandler(f"logs\{datetime.today().strftime('%m%d%Y')}.log"),
         logging.StreamHandler()
     ]
 )
@@ -154,7 +151,6 @@ def startMonitor():
                             restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'], logging)
                             # writes restock timestamp to products.json file
                             updateProdAttributes(moduleName=moduleName, product=product, attrs={'lastRestock': res['timestamp']})
-
                         else:
                             logging.info(msg=f"{res['title']} is in stock, restock began at {last_restock.strftime('%Y-%m-%d %H:%M:%S')}")
                     else: # log that product isn't in stock if instock status is returned false
@@ -165,7 +161,7 @@ def startMonitor():
                 res = module.getProdInfo(prodInfo["prodPage"])
                 if (res['response_code'] // 100 < 4) and (res['title'] != None) and (res['id'] != None):
                     updateProdAttributes(moduleName=moduleName, product=product, attrs={'id': res['id'], 'title': res['title']})
-                    logging.info(f"Successfully retrieved and stored the product id for {res['title']}")
+                    logging.info(f"Retrieved and stored the product id for {res['title']}")
                 else:
                     logging.error(f"Error retrieving product id from {prodInfo['prodPage']}, {res['response_code']} error")
             else:
