@@ -125,7 +125,7 @@ async def monitorProduct(product, prodInfo, module, moduleName):
                     last_restock = datetime.strptime("2002-01-23 12:00:00.000000", "%Y-%m-%d %H:%M:%S.%f") # temporarily sets last_restock equal to an unimportant date that definitely isn't my birthday
                 if (res['timestamp'] - last_restock) > timedelta(minutes=10):
                     # log restock and send discord webhook
-                    restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'], logging)
+                    await restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'], logging)
                     # writes restock timestamp to products.json file
                     updateProdAttributes(moduleName=moduleName, product=product, attrs={'lastRestock': res['timestamp']})
                 else:
@@ -178,8 +178,8 @@ async def startMonitor():
         for product, prodInfo in products[moduleName].items():
             tasks.append(asyncio.create_task(monitorProduct(product=product, prodInfo=prodInfo, module=module, moduleName=moduleName)))
         
-        # runs all tasks (created above) asynchronously
-        await asyncio.gather(*tasks)
+        # runs all tasks (created above) asynchronously. not awaited, so delay starts directly after tasks instead of after all have completed
+        asyncio.gather(*tasks)
 
         # waits specified delay time before checking all products again
         await asyncio.sleep(delay)
