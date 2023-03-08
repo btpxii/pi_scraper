@@ -2,6 +2,7 @@ import time
 import json
 import os
 from datetime import datetime, timedelta
+import asyncio
 
 from pyfiglet import figlet_format
 import logging
@@ -105,8 +106,47 @@ def updateProdAttributes(moduleName, product, attrs):
             json.dump(data, f, indent=4)
     except:
         logging.error(f"Invalid attribute '{attr}' given for product '{product}' in module '{moduleName}'")
-        
-def startMonitor():
+
+async def monitorProduct(product, prodInfo, module, moduleName):
+    """
+    Asynchronous function to monitor a single product
+    """
+    # require product to have an id attribute
+    if prodInfo["id"]:
+        res = await module.checkPage(id=prodInfo["id"]) # runs checkPage function for selected monitor
+        res['url'] = prodInfo["prodPage"] if res['url'] == None else res['url']
+        res['title'] = prodInfo["title"] if res['title'] == None else res['title']
+        if res['response_code'] // 100 < 4: # continue checking response if response code from checkPage wasn't an error
+            if res['instock'] is True: # instock status returned true from checkpage if a restock is found
+                # check timestamp to prevent pinging the same restock multiple times
+                try: # tries to convert current product's lastRestock attribute to a datetime obj
+                    last_restock = datetime.strptime(prodInfo['lastRestock'], "%Y-%m-%d %H:%M:%S.%f")
+                except:
+                    last_restock = datetime.strptime("2002-01-23 12:00:00.000000", "%Y-%m-%d %H:%M:%S.%f") # temporarily sets last_restock equal to an unimportant date that definitely isn't my birthday
+                if (res['timestamp'] - last_restock) > timedelta(minutes=10):
+                    # log restock and send discord webhook
+                    restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'], logging)
+                    # writes restock timestamp to products.json file
+                    updateProdAttributes(moduleName=moduleName, product=product, attrs={'lastRestock': res['timestamp']})
+                else:
+                    logging.info(msg=f"{res['title']} is in stock, restock began at {last_restock.strftime('%Y-%m-%d %H:%M:%S')}")
+            else: # log that product isn't in stock if instock status is returned false
+                logging.info(msg=f"{res['title']} is not in stock")
+        else:
+            logging.error(msg=f"Error checking {res['title']}, {res['response_code']} error")
+    elif ("prodPage" in prodInfo) and (prodInfo["prodPage"]): # if prodPage exists but id doesn't use getProdInfo function to request endpoint and return product id (only used for pishop.us at the moment)
+        res = await module.getProdInfo(prodInfo["prodPage"])
+        if (res['response_code'] // 100 < 4) and (res['title'] != None) and (res['id'] != None):
+            updateProdAttributes(moduleName=moduleName, product=product, attrs={'id': res['id'], 'title': res['title']})
+            logging.info(f"Retrieved and stored the product id for {res['title']}")
+        else:
+            logging.error(f"Error retrieving product id from {prodInfo['prodPage']}, {res['response_code']} error")
+    else:
+        return # skips delay if nothing is done with invalid products
+
+
+
+async def startMonitor():
     """
     Initializes monitor
     """
@@ -122,50 +162,26 @@ def startMonitor():
    '~ .~~~. ~'\033[0m
    """)
 
-    
     modules = getModules()
     moduleName, module = selectModule(modules=modules)
     delay = selectDelay()
-    # moduleName, module = "adafruit", ada
-    # delay = 1
     logging.info(msg=f"STARTING {moduleName.upper()} MONITOR, {delay} SECOND DELAY")
+
     # start of monitor
     while True:
-        products = getProducts()
-        # sucky support for multiple pids (for now)
-        for product, prodInfo in products[moduleName].items(): # split into key and value. key is used to update products.json, val is used for functionality everywhere else
-            # require product to have an id attribute
-            if prodInfo["id"]:
-                res = module.checkPage(id=prodInfo["id"]) # runs checkPage function for selected monitor
-                res['url'] = prodInfo["prodPage"] if res['url'] == None else res['url']
-                res['title'] = prodInfo["title"] if res['title'] == None else res['title']
-                if res['response_code'] // 100 < 4: # continue checking response if response code from checkPage wasn't an error
-                    if res['instock'] is True: # instock status returned true from checkpage if a restock is found
-                        # check timestamp to prevent pinging the same restock multiple times
-                        try: # tries to convert current product's lastRestock attribute to a datetime obj
-                            last_restock = datetime.strptime(prodInfo['lastRestock'], "%Y-%m-%d %H:%M:%S.%f")
-                        except:
-                            last_restock = datetime.strptime("2002-01-23 12:00:00.000000", "%Y-%m-%d %H:%M:%S.%f") # temporarily sets last_restock equal to an unimportant date that definitely isn't my birthday
-                        if (res['timestamp'] - last_restock) > timedelta(minutes=10):
-                            # log restock and send discord webhook
-                            restockAlert(res['url'], res['title'], res['stock'], res['price'], res['method'], res['timestamp'], logging)
-                            # writes restock timestamp to products.json file
-                            updateProdAttributes(moduleName=moduleName, product=product, attrs={'lastRestock': res['timestamp']})
-                        else:
-                            logging.info(msg=f"{res['title']} is in stock, restock began at {last_restock.strftime('%Y-%m-%d %H:%M:%S')}")
-                    else: # log that product isn't in stock if instock status is returned false
-                        logging.info(msg=f"{res['title']} is not in stock")
-                else:
-                    logging.error(msg=f"Error checking {res['title']}, {res['response_code']} error")
-            elif ("prodPage" in prodInfo) and (prodInfo["prodPage"]): # if prodPage exists but id doesn't use getProdInfo function to request endpoint and return product id (only used for pishop.us at the moment)
-                res = module.getProdInfo(prodInfo["prodPage"])
-                if (res['response_code'] // 100 < 4) and (res['title'] != None) and (res['id'] != None):
-                    updateProdAttributes(moduleName=moduleName, product=product, attrs={'id': res['id'], 'title': res['title']})
-                    logging.info(f"Retrieved and stored the product id for {res['title']}")
-                else:
-                    logging.error(f"Error retrieving product id from {prodInfo['prodPage']}, {res['response_code']} error")
-            else:
-                continue # doesn't perform time.sleep(delay) if nothing is done with invalid products.json entry
-            time.sleep(delay) # delay to prevent rate limiting
 
-startMonitor()
+        # gets products from products.json file, in loop to get updated values if products.json has been updated
+        products = getProducts()
+
+        # creates asyncio "tasks", which are function calls that will run asynchronously, for each product within the selected module in products.json
+        tasks = []
+        for product, prodInfo in products[moduleName].items():
+            tasks.append(asyncio.create_task(monitorProduct(product=product, prodInfo=prodInfo, module=module, moduleName=moduleName)))
+        
+        # runs all tasks (created above) asynchronously
+        await asyncio.gather(*tasks)
+
+        # waits specified delay time before checking all products again
+        await asyncio.sleep(delay)
+
+asyncio.run(startMonitor())
