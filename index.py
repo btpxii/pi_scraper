@@ -1,8 +1,8 @@
-import time
 import json
 import os
 from datetime import datetime, timedelta
 import asyncio
+from random import randrange
 
 from pyfiglet import figlet_format
 import logging
@@ -13,11 +13,10 @@ from alert import restockAlert
 
 """
 TO DO
-    1. proxy support (needs to be done before multithreading)
-    2. concurrency for multiple pid support
-    3. determine optimal request headers
+    1. add error handling for bad proxies
+    2. determine optimal request headers
 
-    4. write monitors for the following sites
+    3. write monitors for the following sites
         sparkfun.com
         canakit.com
             try using https://www.canakit.com/Common/System/CartAction.aspx?Action=AddItem&ProductID=IDHERE to add products to cart by id (cant get ids rn)
@@ -91,6 +90,25 @@ def getProducts():
     f.close()
     return products
 
+def getProxies():
+    """
+    Prompts user to enter if they'd like to route requests through proxies (found in proxies.txt file)
+    If yes, gets proxies from proxies.txt file, returns an array containing all proxies
+    Proxies in file should be in username:password@hostname:port format
+    """
+    while True:
+        try:
+            useProxies = input("USE PROXIES? (y/n)\n").lower()
+            if useProxies not in ['y', 'n']: raise ValueError
+            elif useProxies == 'y':
+                    with open('proxies.txt', 'r') as f:
+                        proxies = [f"http://{line.strip()}" for line in f.readlines()]
+            elif useProxies == 'n': proxies = None
+            return proxies
+        except:
+            print("Please enter a valid response (y/n).")
+
+
 def updateProdAttributes(moduleName, product, attrs):
     """
     Updates attributes to given values for a single product in products.json
@@ -107,13 +125,13 @@ def updateProdAttributes(moduleName, product, attrs):
     except:
         logging.error(f"Invalid attribute '{attr}' given for product '{product}' in module '{moduleName}'")
 
-async def monitorProduct(product, prodInfo, module, moduleName):
+async def monitorProduct(product, prodInfo, module, moduleName, proxy):
     """
-    Asynchronous function to monitor a single product
+    Asynchronous function to check a single product for restocks
     """
     # require product to have an id attribute
     if prodInfo["id"]:
-        res = await module.checkPage(id=prodInfo["id"]) # runs checkPage function for selected monitor
+        res = await module.checkPage(id=prodInfo["id"], proxy=proxy) # runs checkPage function for selected monitor
         res['url'] = prodInfo["prodPage"] if res['url'] == None else res['url']
         res['title'] = prodInfo["title"] if res['title'] == None else res['title']
         if res['response_code'] // 100 < 4: # continue checking response if response code from checkPage wasn't an error
@@ -165,6 +183,8 @@ async def startMonitor():
     modules = getModules()
     moduleName, module = selectModule(modules=modules)
     delay = selectDelay()
+    proxies = getProxies()
+
     logging.info(msg=f"STARTING {moduleName.upper()} MONITOR, {delay} SECOND DELAY")
 
     # start of monitor
@@ -176,7 +196,12 @@ async def startMonitor():
         # creates asyncio "tasks", which are function calls that will run asynchronously, for each product within the selected module in products.json
         tasks = []
         for product, prodInfo in products[moduleName].items():
-            tasks.append(asyncio.create_task(monitorProduct(product=product, prodInfo=prodInfo, module=module, moduleName=moduleName)))
+
+            # if using proxies, sets proxy equal to a random proxy from list, otherwise sets proxy equal to none
+            proxy = proxies[randrange(len(proxies))] if proxies else None
+
+            # creates a monitor task, adds to tasks list
+            tasks.append(asyncio.create_task(monitorProduct(product=product, prodInfo=prodInfo, module=module, moduleName=moduleName, proxy=proxy)))
         
         # runs all tasks (created above) asynchronously. not awaited, so delay starts directly after tasks instead of after all have completed
         asyncio.gather(*tasks)

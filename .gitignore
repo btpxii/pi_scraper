@@ -170,4 +170,5 @@ poetry.toml
 # ruff
 .ruff_cache/
 
+proxies.txt
 # End of https://www.toptal.com/developers/gitignore/api/python

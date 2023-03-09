@@ -1,13 +1,13 @@
 import aiohttp
 from datetime import datetime
 
-async def checkPage(id):
+async def checkPage(id, proxy=None):
     """
     Requests the Adafruit api for the given id, returns relevant product info
     """
     r_details = {'instock': False, 'response_code': None, 'url': f"https://www.adafruit.com/product/{id}", 'title': None, 'stock': None, 'price': None, 'timestamp': None, 'method': None}
     async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://www.adafruit.com/api/product/{id}") as r:
+        async with session.get(f"https://www.adafruit.com/api/product/{id}", proxy=proxy) as r:
             r_details['timestamp'] = datetime.utcnow()
             r_details['response_code'] = r.status
             if r.status == 200:

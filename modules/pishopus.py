@@ -2,14 +2,14 @@ import aiohttp
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-async def checkPage(id):
+async def checkPage(id, proxy=None):
     """
     Requests the PiShop api for the given id, returns relevant product info
     """
     r_details = {'instock': False, 'stock': None, 'price': None, 'method': None, 'response_code': None, 'url': None, 'title': None, 'timestamp': None}
     url = f"https://www.pishop.us/remote/v1/product-attributes/{id}"
     async with aiohttp.ClientSession() as session:
-        async with session.get(url) as r:
+        async with session.get(url, proxy=proxy) as r:
             r_details['timestamp'] = datetime.utcnow()
             r_details['response_code'] = r.status
             if r.status == 200:
