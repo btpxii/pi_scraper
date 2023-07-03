@@ -1,0 +1,1 @@
+I wrote this as a fun project to help others to purchase Raspberry Pi products when they were constantly out of stock. Seeing as Raspberry Pi is back on shelves, this (hopefully) is no longer needed :)
